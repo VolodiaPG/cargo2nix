@@ -17,6 +17,7 @@ args@{
   packageOverrides ? pkgs: pkgs.rustBuilder.overrides.all,
   target ? null,
   workspaceSrc ? null,
+  codegenOpts ? null,
   ...
 }:
 let
@@ -28,7 +29,8 @@ let
                                           "extraRustComponents"
                                           "packageFun"
                                           "packageOverrides"
-                                          "target" ];
+                                          "target"
+                                          "codegenOpts" ];
 
   # Rust targets don't always map perfectly to Nix targets, so they are allowed
   # to be independent by specicying an explicit Rust target.
@@ -104,11 +106,11 @@ let
 # performed.  Note that buildRustPackages is just buildPackages with a null
 # target.
 in rustBuilder.makePackageSetInternal (extraArgs // {
-  inherit packageFun workspaceSrc target;
+  inherit packageFun workspaceSrc target codegenOpts;
   rustToolchain = rustToolchain';
   packageOverrides = packageOverrides' pkgs;
   buildRustPackages = buildPackages.rustBuilder.makePackageSetInternal (extraArgs // {
-    inherit packageFun workspaceSrc;
+    inherit packageFun workspaceSrc codegenOpts;
     rustToolchain = rustToolchain';
     target = null;
     packageOverrides = packageOverrides' buildPackages;
